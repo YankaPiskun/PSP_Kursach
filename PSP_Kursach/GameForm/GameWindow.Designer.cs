@@ -1,7 +1,7 @@
 ﻿
 namespace GameForm
 {
-    partial class Form1
+    partial class GameWindow
     {
         /// <summary>
         ///  Required designer variable.
@@ -29,13 +29,34 @@ namespace GameForm
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
+            this.startBtn = new System.Windows.Forms.Button();
+            this.SuspendLayout();
+            // 
+            // startBtn
+            // 
+            this.startBtn.Location = new System.Drawing.Point(332, 193);
+            this.startBtn.Name = "startBtn";
+            this.startBtn.Size = new System.Drawing.Size(75, 23);
+            this.startBtn.TabIndex = 0;
+            this.startBtn.Text = "Start";
+            this.startBtn.UseVisualStyleBackColor = true;
+            this.startBtn.Click += new System.EventHandler(this.startBtn_Click);
+            // 
+            // GameWindow
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.startBtn);
+            this.Name = "GameWindow";
             this.Text = "Form1";
+            this.ResumeLayout(false);
+
         }
 
         #endregion
+
+        private System.Windows.Forms.Button startBtn;
     }
 }
 

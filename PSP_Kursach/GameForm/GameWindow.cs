@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EngineBalloon;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,12 +11,18 @@ using System.Windows.Forms;
 
 namespace GameForm
 {
-    public partial class Form1 : Form
+    public partial class GameWindow : Form
     {
-        public Form1()
+
+        public GameWindow()
         {
             InitializeComponent();
         }
 
+        private void startBtn_Click(object sender, EventArgs e)
+        {
+            using var game = new Game();
+            game.Run();
+        }
     }
 }

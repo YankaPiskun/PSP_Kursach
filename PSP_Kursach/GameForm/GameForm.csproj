@@ -6,4 +6,8 @@
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\EngineBalloon\EngineBalloon.csproj" />
+  </ItemGroup>
+
 </Project>
