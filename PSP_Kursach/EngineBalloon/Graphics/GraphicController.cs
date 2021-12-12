@@ -17,7 +17,7 @@ namespace EngineBalloon.Graphics
 
 
             Textures[0] = Texture.LoadFromFile(shaderPathTextures + "Test.png");
-            Textures[0].Use(TextureUnit.Texture0);
+            Textures[1] = Texture.LoadFromFile(shaderPathTextures + "Bullet.png");
         }
     }
 }

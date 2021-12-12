@@ -3,7 +3,7 @@ using OpenTK.Mathematics;
 
 namespace EngineBalloon.Graphics
 {
-    internal class Sprite
+    public class Sprite
     {
         private readonly float[] _vertices;
 

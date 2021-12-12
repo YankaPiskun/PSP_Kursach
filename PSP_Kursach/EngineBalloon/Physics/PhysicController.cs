@@ -19,7 +19,7 @@ namespace EngineBalloon.Physics
         {
             foreach (var gameObject in gameObjects)
             {
-                gameObject.Position += Gravity * gameObject.GravityScale * deltaTime;
+                gameObject.Direction += Gravity * gameObject.GravityScale * deltaTime;
             }
         }
     }

@@ -8,12 +8,14 @@ using EngineBalloon.Graphics;
 using EngineBalloon.GameObjects;
 using System.Collections.Generic;
 using EngineBalloon.Physics;
+using EngineBalloon.GameObjects.Bullets;
 
 namespace EngineBalloon
 {
     public class Game : GameWindow
     {
         private Action<string> _drawFps;
+
 
 
         private GraphicController GraphicController { get; set; }
@@ -25,15 +27,16 @@ namespace EngineBalloon
         private Player Main { get; set; }
         private Player Secondary { get; set; }
 
-        public Game(Action<string> drawFPS = null) : base(GameWindowSettings.Default, new NativeWindowSettings
+        public Game(Action<string> drawFPS = null, int width = 800, int height = 600) : base(GameWindowSettings.Default, new NativeWindowSettings
         {
-            Size = new Vector2i(800, 600),
+            Size = new Vector2i(width, height),
             WindowBorder = WindowBorder.Hidden,
             WindowState = WindowState.Normal,
             Title = "Balloon War!",
             APIVersion = new Version(3, 3),
             Profile = ContextProfile.Core,
             API = ContextAPI.OpenGL,
+            IsFullscreen = true,
             NumberOfSamples = 0
         })
         {
@@ -44,17 +47,23 @@ namespace EngineBalloon
         {
             base.OnLoad();
 
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+
             GL.ClearColor(Color4.LightBlue);
 
-            GraphicController = new GraphicController(1, "Graphics/Shaders/", "Graphics/Textures/");
+            GraphicController = new GraphicController(2, "Graphics/Shaders/", "Graphics/Textures/");
 
             GameObjects = new List<GameObject>();
 
-            Main = new Player(new Sprite(GraphicController.Shader, GraphicController.Textures[0]), new Vector2(-0.8f, 0.0f));
+            var bullet = new Bullet(new Sprite(GraphicController.Shader, GraphicController.Textures[1]));
+            bullet.ResizeByWindow(Size.X, Size.Y);
+
+            Main = new Player(bullet, new Sprite(GraphicController.Shader, GraphicController.Textures[0]), new Vector2(-0.8f, 0.0f));
             Main.ResizeByWindow(Size.X, Size.Y);
             GameObjects.Add(Main);
 
-            Secondary = new Player(new Sprite(GraphicController.Shader, GraphicController.Textures[0]), new Vector2(0.8f, 0.0f));
+            Secondary = new Player(bullet, new Sprite(GraphicController.Shader, GraphicController.Textures[0]), new Vector2(0.8f, 0.0f));
             Secondary.ResizeByWindow(Size.X, Size.Y);
             GameObjects.Add(Secondary);
 
@@ -79,12 +88,27 @@ namespace EngineBalloon
 
             if (Timer.IsFixedUpdate())
             {
-                Main.Move(KeyboardState, Timer.DeltaTime);
-
                 PhysicController.UseGravity(GameObjects, Timer.DeltaTime);
+
+                Main.Move(KeyboardState, AddBullet, Timer.DeltaTime);
+
+                foreach (var obj in GameObjects)
+                {
+                    obj.FixedUpdate(Timer.DeltaTime);
+                }
             }
 
             Timer.Update();
+        }
+
+        private void AddBullet(Bullet baseBullet)
+        {
+            var bullet = (Bullet)baseBullet.Clone();
+            var direction =  new Vector2((MousePosition.X * 2 / Size.X) - 1.0f - bullet.Position.X, 
+                bullet.Position.Y - ((MousePosition.Y * 2 / Size.Y) - 1.0f));
+            direction.Normalize();
+            bullet.Direction = direction;
+            GameObjects.Add(bullet);
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)
@@ -93,8 +117,10 @@ namespace EngineBalloon
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            Main.Draw();
-            Secondary.Draw();
+            foreach (var obj in GameObjects)
+            {
+                obj.Draw();
+            }
 
             _drawFps?.Invoke("Fps: " + Timer.FrameCount);
 

@@ -20,6 +20,9 @@
     <None Update="Graphics\Shaders\shader.vert">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Graphics\Textures\Bullet.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Graphics\Textures\Test.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -6,7 +6,7 @@ using OpenTK.Mathematics;
 
 namespace EngineBalloon.Graphics
 {
-    internal class Shader
+    public class Shader
     {
         public readonly int Handle;
 
