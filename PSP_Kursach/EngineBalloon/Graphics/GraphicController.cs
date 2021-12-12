@@ -1,9 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL4;
-using System.Runtime.Versioning;
 
 namespace EngineBalloon.Graphics
 {
-    [SupportedOSPlatform("windows")]
     internal class GraphicController
     {
         public Shader Shader { get; set; }

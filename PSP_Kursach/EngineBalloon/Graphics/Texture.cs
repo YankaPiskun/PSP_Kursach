@@ -1,15 +1,16 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Runtime.Versioning;
 using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 
 namespace EngineBalloon.Graphics
 {
-    [SupportedOSPlatform("windows")]
-    public class Texture
+    internal class Texture
     {
         public readonly int Handle;
+
+        public readonly int Width;
+        public readonly int Height;
 
         public static Texture LoadFromFile(string path)
         {
@@ -17,6 +18,9 @@ namespace EngineBalloon.Graphics
 
             GL.ActiveTexture(TextureUnit.Texture0);
             GL.BindTexture(TextureTarget.Texture2D, handle);
+
+            int width = 0;
+            int heigth = 0;
 
             using (var image = new Bitmap(path))
             {
@@ -36,6 +40,9 @@ namespace EngineBalloon.Graphics
                     PixelFormat.Bgra,
                     PixelType.UnsignedByte,
                     data.Scan0);
+
+                width = image.Width;
+                heigth = image.Height;
             }
 
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Linear);
@@ -46,12 +53,14 @@ namespace EngineBalloon.Graphics
 
             GL.GenerateMipmap(GenerateMipmapTarget.Texture2D);
 
-            return new Texture(handle);
+            return new Texture(handle, width, heigth);
         }
 
-        public Texture(int glHandle)
+        public Texture(int glHandle, int width, int height)
         {
             Handle = glHandle;
+            Width = width;
+            Height = height;
         }
 
         public void Use(TextureUnit unit)

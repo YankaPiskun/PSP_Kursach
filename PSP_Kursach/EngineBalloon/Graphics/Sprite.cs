@@ -1,11 +1,8 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using System.Runtime.Versioning;
-using System;
 
 namespace EngineBalloon.Graphics
 {
-    [SupportedOSPlatform("windows")]
     internal class Sprite
     {
         private readonly float[] _vertices;
@@ -22,6 +19,7 @@ namespace EngineBalloon.Graphics
 
         private Texture _texture;
 
+        public Texture Texture => _texture; 
 
         public Sprite(Shader shader, Texture texture)
         {

@@ -3,27 +3,32 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Windowing.Desktop;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using OpenTK.Mathematics;
-using System.ComponentModel;
 using EngineBalloon.Graphics;
-using System.Runtime.Versioning;
+using EngineBalloon.GameObjects;
+using System.Collections.Generic;
+using EngineBalloon.Physics;
 
 namespace EngineBalloon
 {
-    [SupportedOSPlatform("windows")]
     public class Game : GameWindow
     {
-        private GraphicController GraphicController { get; set; }
-        private Sprite Sprite { get; set; }
+        private Action<string> _drawFps;
 
-        public Game() : base(GameWindowSettings.Default, new NativeWindowSettings 
-        { 
-            Size = new Vector2i(800, 600), 
-            WindowBorder = WindowBorder.Hidden, 
+
+        private GraphicController GraphicController { get; set; }
+
+
+        private List<GameObject> GameObjects { get; set; }
+
+
+        private Player Main { get; set; }
+        private Player Secondary { get; set; }
+
+        public Game(Action<string> drawFPS = null) : base(GameWindowSettings.Default, new NativeWindowSettings
+        {
+            Size = new Vector2i(800, 600),
+            WindowBorder = WindowBorder.Hidden,
             WindowState = WindowState.Normal,
             Title = "Balloon War!",
             APIVersion = new Version(3, 3),
@@ -32,6 +37,7 @@ namespace EngineBalloon
             NumberOfSamples = 0
         })
         {
+            _drawFps = drawFPS;
         }
 
         protected override void OnLoad()
@@ -42,7 +48,17 @@ namespace EngineBalloon
 
             GraphicController = new GraphicController(1, "Graphics/Shaders/", "Graphics/Textures/");
 
-            Sprite = new Sprite(GraphicController.Shader, GraphicController.Textures[0]);
+            GameObjects = new List<GameObject>();
+
+            Main = new Player(new Sprite(GraphicController.Shader, GraphicController.Textures[0]), new Vector2(-0.8f, 0.0f));
+            Main.ResizeByWindow(Size.X, Size.Y);
+            GameObjects.Add(Main);
+
+            Secondary = new Player(new Sprite(GraphicController.Shader, GraphicController.Textures[0]), new Vector2(0.8f, 0.0f));
+            Secondary.ResizeByWindow(Size.X, Size.Y);
+            GameObjects.Add(Secondary);
+
+            Timer.Run();
         }
 
         protected override void OnResize(ResizeEventArgs e)
@@ -60,6 +76,15 @@ namespace EngineBalloon
             {
                 Close();
             }
+
+            if (Timer.IsFixedUpdate())
+            {
+                Main.Move(KeyboardState, Timer.DeltaTime);
+
+                PhysicController.UseGravity(GameObjects, Timer.DeltaTime);
+            }
+
+            Timer.Update();
         }
 
         protected override void OnRenderFrame(FrameEventArgs args)
@@ -68,7 +93,10 @@ namespace EngineBalloon
 
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
-            Sprite.Draw(Vector2.Zero, Vector2.One * 0.2f, 0f, false);
+            Main.Draw();
+            Secondary.Draw();
+
+            _drawFps?.Invoke("Fps: " + Timer.FrameCount);
 
             SwapBuffers();
         }
