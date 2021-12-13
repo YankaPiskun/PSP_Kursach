@@ -42,7 +42,7 @@ namespace EngineBalloon.GameObjects.Prizes.Creators
             {
                 Id = rnd.Next(Creators.Length),
                 X = (float)rnd.NextDouble() * 2 - 1.0f,
-                Y = (float)rnd.NextDouble() * 2 - 1.0f,
+                Y = (float)rnd.NextDouble() * 1.4f - 0.7f,
             };
 
             return GetPrize(prizeModel);

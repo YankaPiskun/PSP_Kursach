@@ -21,7 +21,7 @@ namespace GameForm
 
         private void startBtn_Click(object sender, EventArgs e)
         {
-            using var game = new Game((text) => { lableFPS.Text = text; });
+            using var game = new Game("26.220.136.57", (text) => { lableFPS.Text = text; });
             game.Run();
         }
     }

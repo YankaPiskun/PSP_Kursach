@@ -9,7 +9,7 @@ namespace EngineBalloon.GameObjects.Prizes
         public Prize(Sprite sprite, Vector2 position = default, float angle = 0) 
             : base(sprite, position, angle)
         {
-            Radius = 20f;
+            Radius = 70f;
         }
 
         public virtual void UsePrize(Player player)
