@@ -16,8 +16,23 @@ namespace EngineBalloon.Graphics
             Shader.Use();
 
 
-            Textures[0] = Texture.LoadFromFile(shaderPathTextures + "Test.png");
-            Textures[1] = Texture.LoadFromFile(shaderPathTextures + "Bullet.png");
+            Textures[0] = Texture.LoadFromFile(shaderPathTextures + "Player1.png");
+            Textures[1] = Texture.LoadFromFile(shaderPathTextures + "Player2.png");
+            Textures[2] = Texture.LoadFromFile(shaderPathTextures + "Броня.png");
+            Textures[3] = Texture.LoadFromFile(shaderPathTextures + "Ветер1.png");
+            Textures[4] = Texture.LoadFromFile(shaderPathTextures + "Ветер2.png");
+            Textures[5] = Texture.LoadFromFile(shaderPathTextures + "Здоровье.png");
+            Textures[6] = Texture.LoadFromFile(shaderPathTextures + "Земля.png");
+            Textures[7] = Texture.LoadFromFile(shaderPathTextures + "Пули.png");
+            Textures[8] = Texture.LoadFromFile(shaderPathTextures + "РадиусСнарядов.png");
+            Textures[9] = Texture.LoadFromFile(shaderPathTextures + "СкоростьСнарядов.png");
+            Textures[10] = Texture.LoadFromFile(shaderPathTextures + "Топливо.png");
+            Textures[11] = Texture.LoadFromFile(shaderPathTextures + "Урон.png");
         }
+
+        public Sprite GetSprite(int index)
+        {
+            return new Sprite(Shader, Textures[index]);
+        } 
     }
 }

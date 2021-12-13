@@ -4,7 +4,7 @@ using System;
 
 namespace EngineBalloon.GameObjects.Bullets
 {
-    public class Bullet : GameObject, IBullet, ICloneable
+    public class Bullet : GameObject, ICloneable
     {
         public Bullet(Sprite sprite, Vector2 position = default, float angle = 0) 
             : base(sprite, position, angle)
@@ -12,14 +12,16 @@ namespace EngineBalloon.GameObjects.Bullets
             Direction = Vector2.Zero;
             Damage = 1;
             Speed = 1.0f;
-            Radius = 10.0f;
+            Radius = 20.0f;
             GravityScale = 50f;
         }
         public Bullet() : base(){}
 
         public virtual int Damage { get; set; }
+
         public virtual float Speed { get; set; }
-        public virtual float Radius { get; set; }
+
+        public virtual Player Parent { get; set; }
 
         public virtual void Move(float deltaTime)
         {
@@ -29,7 +31,7 @@ namespace EngineBalloon.GameObjects.Bullets
 
         public virtual object Clone()
         {
-            return new Bullet(Sprite, Position, Angle) { Scale = Scale, GravityScale = GravityScale };
+            return new Bullet(Sprite, Position, Angle) { Scale = Scale, GravityScale = GravityScale, Parent = Parent };
         }
 
         public override void FixedUpdate(float deltaTime)

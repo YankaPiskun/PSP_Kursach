@@ -9,6 +9,7 @@ using EngineBalloon.GameObjects;
 using System.Collections.Generic;
 using EngineBalloon.Physics;
 using EngineBalloon.GameObjects.Bullets;
+using EngineBalloon.GameObjects.Prizes.Creators;
 
 namespace EngineBalloon
 {
@@ -16,13 +17,9 @@ namespace EngineBalloon
     {
         private Action<string> _drawFps;
 
-
-
         private GraphicController GraphicController { get; set; }
 
-
         private List<GameObject> GameObjects { get; set; }
-
 
         private Player Main { get; set; }
         private Player Secondary { get; set; }
@@ -43,6 +40,40 @@ namespace EngineBalloon
             _drawFps = drawFPS;
         }
 
+        private void SetUpPrize()
+        {
+            PrizeCreator.MaxPrize = 7;
+            PrizeCreator.PrizeCount = 0;
+            PrizeCreator.Creators = new PrizeCreator[6]
+            {
+                new PrizeArmorCreator(GraphicController.GetSprite(2)),
+                new PrizeDamageCreator(GraphicController.GetSprite(11)),
+                new PrizeFuilCreator(GraphicController.GetSprite(10)),
+                new PrizeHealthCreator(GraphicController.GetSprite(5)),
+                new PrizeRadiusCreator(GraphicController.GetSprite(8)),
+                new PrizeSpeedCreator(GraphicController.GetSprite(9)),
+            };
+            PrizeCreator.SizeWindow = Size * 3;
+        }
+
+        private void SetUpPlayer()
+        {
+            var bullet = new Bullet(GraphicController.GetSprite(7));
+            bullet.ResizeByWindow(Size.X, Size.Y);
+            bullet.Scale *= 0.5f;
+
+            Main = new Player(bullet, GraphicController.GetSprite(0), new Vector2(-0.8f, 0.0f));
+            Main.ResizeByWindow(Size.X, Size.Y);
+            Main.Scale *= 0.5f;
+            GameObjects.Add(Main);
+
+            Secondary = new Player(bullet, GraphicController.GetSprite(1), new Vector2(0.8f, 0.0f));
+            Secondary.ResizeByWindow(Size.X, Size.Y);
+            Secondary.Scale *= 0.5f;
+            GameObjects.Add(Secondary);
+        }
+
+
         protected override void OnLoad()
         {
             base.OnLoad();
@@ -52,20 +83,12 @@ namespace EngineBalloon
 
             GL.ClearColor(Color4.LightBlue);
 
-            GraphicController = new GraphicController(2, "Graphics/Shaders/", "Graphics/Textures/");
-
+            GraphicController = new GraphicController(12, "Graphics/Shaders/", "Graphics/Textures/");
             GameObjects = new List<GameObject>();
 
-            var bullet = new Bullet(new Sprite(GraphicController.Shader, GraphicController.Textures[1]));
-            bullet.ResizeByWindow(Size.X, Size.Y);
-
-            Main = new Player(bullet, new Sprite(GraphicController.Shader, GraphicController.Textures[0]), new Vector2(-0.8f, 0.0f));
-            Main.ResizeByWindow(Size.X, Size.Y);
-            GameObjects.Add(Main);
-
-            Secondary = new Player(bullet, new Sprite(GraphicController.Shader, GraphicController.Textures[0]), new Vector2(0.8f, 0.0f));
-            Secondary.ResizeByWindow(Size.X, Size.Y);
-            GameObjects.Add(Secondary);
+            SetUpPrize();
+            SetUpPlayer();
+            PhysicController.SizeWindow = Size;
 
             Timer.Run();
         }
@@ -88,9 +111,14 @@ namespace EngineBalloon
 
             if (Timer.IsFixedUpdate())
             {
+                if(PrizeCreator.PrizeCount < PrizeCreator.MaxPrize) 
+                    GameObjects.Add(PrizeCreator.GetPrize(out var prizeModel));
                 PhysicController.UseGravity(GameObjects, Timer.DeltaTime);
 
-                Main.Move(KeyboardState, AddBullet, Timer.DeltaTime);
+                Main.UseControl(KeyboardState, AddBullet);
+
+                PhysicController.Collision(Main, GameObjects);
+                PhysicController.Collision(Secondary, GameObjects);
 
                 foreach (var obj in GameObjects)
                 {

@@ -4,55 +4,74 @@ using EngineBalloon.Physics.Interfaces;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EngineBalloon.GameObjects
 {
-    internal class Player : GameObject, IPhysic
+    public class Player : GameObject, IPhysic
     {
-        private const float MoveY = 0.2f;
+        private const float MoveY = 0.02f;
 
-        private Bullet _baseBullet;
+        public Bullet BaseBullet { get; set; }
+
+        public int HP { get; set; }
+
+        public int Armor { get; set; }
+
+        public float Fuel { get; set; }
 
         public Player(Bullet baseBullet, Sprite sprite, Vector2 position = default, float angle = 0) 
             : base(sprite, position, angle)
         {
             GravityScale = 1.0f;
-            _baseBullet = baseBullet;
+            BaseBullet = (Bullet)baseBullet.Clone();
+            BaseBullet.Parent = this;
+            Radius = 100f;
         }
 
-        public void Move(KeyboardState keyboardState, Action<Bullet> addBullet, float deltaTime)
+        public void UseControl(KeyboardState keyboardState, Action<Bullet> addBullet)
         {
             if (keyboardState.IsKeyDown(Keys.S))
             {
-                Direction -= new Vector2(0.0f, MoveY * deltaTime);
+                Direction -= new Vector2(0.0f, MoveY);
             }
 
             if (keyboardState.IsKeyDown(Keys.W))
             {
-                Direction += new Vector2(0.0f, MoveY * deltaTime);
+                Direction += new Vector2(0.0f, MoveY);
             }
-
-            Position += Direction;
-            Direction = Vector2.Zero;
 
             if (keyboardState.IsKeyDown(Keys.Up))
             {
-                _baseBullet = new BulletRadius(_baseBullet);
+                BaseBullet = new BulletRadius(BaseBullet);
             }
 
             if (keyboardState.IsKeyDown(Keys.Down))
             {
-                _baseBullet = new BulletSpeed(_baseBullet);
+                BaseBullet = new BulletSpeed(BaseBullet);
             }
 
             if (keyboardState.IsKeyPressed(Keys.Space))
             {
-                _baseBullet.Position = Position;
-                addBullet(_baseBullet);
+                BaseBullet.Position = Position;
+                addBullet(BaseBullet);
+            }
+        }
+
+        public override void FixedUpdate(float deltaTime)
+        {
+            Position += Direction;
+            Direction = Vector2.Zero;
+        }
+
+        public void TakeDamage(int damage)
+        {
+            if(Armor > 0)
+            {
+                Armor--;
+            }
+            else
+            {
+                HP -= damage;
             }
         }
     }

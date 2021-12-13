@@ -1,5 +1,6 @@
 ﻿using EngineBalloon.Graphics;
 using EngineBalloon.Physics.Interfaces;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
 namespace EngineBalloon.GameObjects
@@ -21,6 +22,8 @@ namespace EngineBalloon.GameObjects
         public virtual Sprite Sprite { get; set; }
 
         public virtual float GravityScale { get; set; }
+
+        public virtual float Radius { get; set; }
 
         public GameObject(Sprite sprite, Vector2 position = default, float angle = default)
         {

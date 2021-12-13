@@ -25,6 +25,7 @@ namespace EngineBalloon.GameObjects.Bullets
         public override int Damage { get => _bullet.Damage; set => _bullet.Damage = value; }
         public override float Speed { get => _bullet.Speed; set => _bullet.Speed = value; }
         public override float Radius { get => _bullet.Radius; set => _bullet.Radius = value; }
+        public override Player Parent { get => _bullet.Parent; set => _bullet.Parent = value; }
 
         public override object Clone()
         {
